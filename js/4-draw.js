@@ -1,4 +1,13 @@
 let redraw = () => {
+    drawGrid();
+    destroyDead();
+    drawStaticPieces();
+    drawMarkers();
+
+    triggerWin();
+}
+
+let drawGrid = () => {
     // Draw background
     ctx.fillStyle = "blanchedalmond";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -19,13 +28,25 @@ let redraw = () => {
         ctx.lineTo(Math.floor(cellSize * i), canvas.width);
         ctx.stroke();
     }
+}
 
+let destroyDead = () => {
+    let indices = [];
+
+    //find out # of those, who are dead
     pieceList.forEach((piece) => {
         if (piece.health <= 0) {
-            piece.destroy();
+            indices.push( pieceList.indexOf( piece ) );
         }
     });
-    
+
+    //destroy them from the array backwards
+    indices.slice().reverse().forEach(index => {
+        pieceList[index].destroy();
+    });
+}
+
+let drawStaticPieces = () => {
     pieceList.forEach((piece) => {
         if (piece.dragged != true) {
             let absX = piece.x * cellSize;
@@ -40,10 +61,19 @@ let redraw = () => {
             }
         }
     });
+}
 
+let drawMarkers = () => {
     possibleMoves.forEach((marker) => {
-        ctx.drawImage(markerImage.img, marker.x * cellSize - cellSize, marker.y * cellSize - cellSize, cellSize, cellSize);
-    });
+        ctx.fillStyle = "rgba(255, 187, 0, .5)";
+        ctx.fillRect(marker.x * cellSize - cellSize, marker.y * cellSize - cellSize, cellSize, cellSize);
+    })
+}
 
-    
+let triggerWin = () => {
+    if( pieceList.length === 1 ) {
+        console.log("You win!!✨✨✨");
+    } else if ( pieceList.length <= 0 ) {
+        console.log("It's a draw");
+    }
 }

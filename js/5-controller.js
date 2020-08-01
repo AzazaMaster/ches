@@ -1,78 +1,75 @@
-let dragged = false;
-let currentHover;
-let currentCellX;
-let currentCellY;
-
-let tryToDrag = (e) => {
-    pieceList.forEach((piece) => {
-        if(piece.x === currentCellX && piece.y === currentCellY) {
-            index = pieceList.indexOf(piece);
-            if(index >= 0) {
-                currentHover = pieceList[index];
-                currentHover.markup();
-                redraw();
-            }
-        }
-    })
-
-}
-
-
-document.addEventListener("mousedown", (e) => {
-    tryToDrag(e);
+document.addEventListener("mousedown", ( e ) => {
+    tryToDrag( e );
+    if( pieceCurrentlyHovered ) {
+        pieceCurrentlyHovered.markup();
+    }
 });
 
-//current cell
-document.addEventListener("mousemove", (e) => {
-    //Find out what cell is cursor in
-    currentCellX = Math.ceil(e.pageX / cellSize);
-    currentCellY = Math.ceil(e.pageY / cellSize);
-
-    if (currentHover) {
-        currentHover.dragged = true;
-        redraw();
-        ctx.drawImage(currentHover.img, e.pageX - cellSize / 2, e.pageY - cellSize / 2, cellSize, cellSize);
-    }
-
-    //Find out what piece is hovered
-    pieceList.forEach((piece) => {
-        //Dragging ✅
-        if(piece.dragged === true) {
-            redraw();
-            ctx.drawImage(piece.img, e.pageX - cellSize / 2, e.pageY - cellSize / 2, cellSize, cellSize);
-        }
-    })    
-})
+document.addEventListener("mousemove", ( e ) => {
+    imprintHoveredSquared( e );
+    imprintHoveredPiece( e ); 
+    drawDraggedPiece( e );
+});
 
 
 document.addEventListener("mouseup", (e) => {
-    if(currentHover != null) {
+    if(pieceCurrentlyHovered != null) {
         possibleMoves.forEach((move) => {
-            if( (move.x === currentCellX) && (move.y === currentCellY) ) {
-                currentHover.x = currentCellX;
-                currentHover.y = currentCellY;
+            if( (move.x === hoverSquare.x) && (move.y === hoverSquare.y) ) {
+                pieceCurrentlyHovered.x = hoverSquare.x;
+                pieceCurrentlyHovered.y = hoverSquare.y;
             }
         })
         pieceList.forEach((piece) => {
-            if(piece !== currentHover) {
-                if(piece.x === currentHover.x && piece.y === currentHover.y) {
+            if(piece !== pieceCurrentlyHovered) {
+                if(piece.x === pieceCurrentlyHovered.x && piece.y === pieceCurrentlyHovered.y) {
                     let index = pieceList.indexOf(piece);
                     pieceList.splice(index, 1);
                 }
             }
         })
 
-        currentHover.attack();
+        pieceCurrentlyHovered.attack();
 
-        currentHover.dragged = false;
-        currentHover = null;
+        pieceCurrentlyHovered.dragged = false;
+        pieceCurrentlyHovered = null;
         possibleMoves = [];
 
         redraw();
     }
-
-    //Winning screen
-    if(pieceList.length <= 1) {
-        console.log("You win!✨✨✨");
-    }
 })
+
+let imprintHoveredSquared = (e) => {
+    hoverSquare.x = Math.ceil(e.pageX / cellSize);
+    hoverSquare.y = Math.ceil(e.pageY / cellSize);
+}
+
+let tryToDrag = (e) => {
+    pieceList.forEach((piece) => {
+        if(piece.x === hoverSquare.x && piece.y === hoverSquare.y) {
+            index = pieceList.indexOf(piece);
+            if(index >= 0) {
+                pieceCurrentlyHovered = pieceList[index];
+                pieceCurrentlyHovered.dragged = true;
+            }
+        }
+    })
+}
+
+let imprintHoveredPiece = ( e ) => {
+    pieceList.forEach((piece) => {
+        //Dragging ✅
+        if(piece.dragged === true) {
+            redraw();
+            ctx.drawImage(piece.img, e.pageX - cellSize / 2, e.pageY - cellSize / 2, cellSize, cellSize);
+        }
+    }) 
+}
+
+let drawDraggedPiece = ( e ) => {
+    if ( pieceCurrentlyHovered ) {
+        pieceCurrentlyHovered.dragged = true;
+        redraw();
+        ctx.drawImage(pieceCurrentlyHovered.img, e.pageX - cellSize / 2, e.pageY - cellSize / 2, cellSize, cellSize);
+    }
+}
