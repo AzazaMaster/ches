@@ -8,6 +8,9 @@ class Piece {
         this.y = startingPositionY;
         this.health = 4;
     }
+    markup() {}
+    telegraphAttack() {}
+    attack() {}
     destroy() {
         index = pieceList.indexOf(this);
         pieceList.splice(index, 1);
@@ -64,6 +67,11 @@ class BlastBot extends Piece {
             }
         }
     }
+    telegraphAttack (x, y) {
+        tellegraphedAttackSquares.push(
+            { x: x - 1, y: y }, { x: x + 1, y: y }, { x: x, y: y - 1 }, { x: x, y: y + 1 }
+        );
+    }
     attack() {
         pieceList.forEach((piece) => {
             if( ( (piece.x === this.x - 1) || (piece.x === this.x + 1) ) && (piece.y === this.y) || 
@@ -81,7 +89,6 @@ class HealBot extends Piece {
     }
     markup() {
         for(let i = -2; i <= 2; i++) {
-            console.log(i)
             if (i === 0) {
 
             } else {
@@ -98,6 +105,9 @@ class HealBot extends Piece {
                 }
             }
         }
+    }
+    telegraphAttack() {
+
     }
     attack() {
         pieceList.forEach((piece) => {

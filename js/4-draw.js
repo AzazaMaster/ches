@@ -3,6 +3,7 @@ let redraw = () => {
     destroyDead();
     drawStaticPieces();
     drawMarkers();
+    drawTelegraphedAttack();
 
     triggerWin();
 }
@@ -76,4 +77,11 @@ let triggerWin = () => {
     } else if ( pieceList.length <= 0 ) {
         console.log("It's a draw");
     }
+}
+
+let drawTelegraphedAttack = () => {
+    tellegraphedAttackSquares.forEach(attack => {
+        ctx.fillStyle = "rgba(255, 38, 0, .5)";
+        ctx.fillRect(attack.x * cellSize - cellSize / 1.3, attack.y * cellSize - cellSize / 1.3, cellSize / 2, cellSize / 2);
+    })
 }

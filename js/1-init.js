@@ -5,9 +5,10 @@ var ctx = canvas.getContext("2d");
 
 let pieceList = [];
 let possibleMoves = [{}];
+let tellegraphedAttackSquares = [{}];
 
 let pieceCurrentlyHovered;
-let hoverSquare = {
+let hoveredSquare = {
     x: null,
     y: null
 }
